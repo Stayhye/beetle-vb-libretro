@@ -14,9 +14,6 @@ bool MDFNMP_Init(uint32 ps, uint32 numpages);
 void MDFNMP_AddRAM(uint32 size, uint32 address, uint8 *RAM);
 void MDFNMP_Kill(void);
 
-void MDFNMP_InstallReadPatches(void);
-void MDFNMP_RemoveReadPatches(void);
-
 void MDFNMP_ApplyPeriodicCheats(void);
 
 #endif

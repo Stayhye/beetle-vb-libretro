@@ -2336,7 +2336,6 @@ bool retro_load_game(const struct retro_game_info *info)
       return false;
 
    MDFN_LoadGameCheats(NULL);
-   MDFNMP_InstallReadPatches();
 
 #ifdef WANT_16BPP
    pix_fmt.bpp        = 16;
