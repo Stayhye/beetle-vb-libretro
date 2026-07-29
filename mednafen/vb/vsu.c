@@ -108,9 +108,9 @@ void VSU_Power(void)
       EffFreq[ch] = 0;
       Envelope[ch] = 0;
       WavePos[ch] = 0;
-      FreqCounter[ch] = 0;
+      FreqCounter[ch] = 1;
       IntervalCounter[ch] = 0;
-      EnvelopeCounter[ch] = 0;
+      EnvelopeCounter[ch] = 1;
 
       EffectsClockDivider[ch] = 4800;
       IntervalClockDivider[ch] = 4;
