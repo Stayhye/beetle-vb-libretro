@@ -397,6 +397,17 @@ static void VB_Power(void)
    TIMER_Power();
    VBINPUT_Power();
 
+   /* VSU_Power() clears the synth's per-channel last_output tracking, but the
+    * resampler buffers live out here and keep their fractional offset and
+    * integrator state, so without this a reset carries audio state over from
+    * before it. Safe on the initial Load() path too, where the buffers have
+    * not been configured yet and this is a no-op. */
+   {
+      int y;
+      for(y = 0; y < 2; y++)
+         Blip_Buffer_clear(&sbuf[y], 1);
+   }
+
    EventReset();
    IRQ_Asserted = 0;
    RecalcIntLevel();
