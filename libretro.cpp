@@ -1961,6 +1961,9 @@ static void Emulate(EmulateSpecStruct *espec, int16_t *sound_buf)
       for(y = 0; y < 2; y++)
       {
          Blip_Buffer_end_frame(&sbuf[y], (v810_timestamp + VSU_CycleFix) >> 2);
+         /* Both channels are clocked identically and so always yield the same
+          * count; take it from the last one rather than letting each pass
+          * overwrite the previous. */
          espec->SoundBufSize = Blip_Buffer_read_samples(&sbuf[y], sound_buf + y, espec->SoundBufMaxSize);
       }
    }
@@ -2501,9 +2504,17 @@ static void update_geometry(unsigned width, unsigned height)
    environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &info);
 }
 
+/* Capacity of the frame audio buffer, in stereo frames. Blip_Buffer_read_samples()
+ * interleaves by stepping the destination two int16_t at a time, so the array
+ * needs twice this many elements and the value handed to it as a maximum is a
+ * frame count, not an element count. The buffers are configured for 44.1kHz over
+ * a 50ms window, which caps samples_avail() at 2250 per call, so this leaves
+ * roughly 3.6x headroom and still covers a widened rate or window. */
+#define SOUND_BUF_FRAMES 8192
+
 void retro_run(void)
 {
-   static int16_t sound_buf[0x10000];
+   static int16_t sound_buf[SOUND_BUF_FRAMES * 2];
    EmulateSpecStruct spec;
    static unsigned width   = 0, height = 0;
    bool resolution_changed = false;
@@ -2518,7 +2529,7 @@ void retro_run(void)
    spec.DisplayRect.y      = 0;
    spec.DisplayRect.w      = 0;
    spec.DisplayRect.h      = 0;
-   spec.SoundBufMaxSize    = sizeof(sound_buf) / 2;
+   spec.SoundBufMaxSize    = SOUND_BUF_FRAMES;
    spec.SoundBufSize       = 0;
 
    if (memcmp(&last_pixel_format, &spec.surface->format, sizeof(struct MDFN_PixelFormat)))
@@ -2535,6 +2546,11 @@ void retro_run(void)
    width  = spec.DisplayRect.w;
    height = spec.DisplayRect.h;
 
+   /* Declare the new geometry before handing over a frame that already uses
+    * it, otherwise the frontend scales one frame against the old dimensions. */
+   if (resolution_changed)
+      update_geometry(width, height);
+
 #if defined(WANT_32BPP)
    const uint32_t *pix = surf.pixels;
    video_cb(pix, width, height, FB_WIDTH << 2);
@@ -2548,9 +2564,6 @@ void retro_run(void)
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
-
-   if (resolution_changed)
-      update_geometry(width, height);
 }
 
 void retro_get_system_info(struct retro_system_info *info)
