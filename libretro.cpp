@@ -2343,6 +2343,18 @@ bool retro_load_game(const struct retro_game_info *info)
    last_pixel_format.Ashift     = 0;
 
    surf.format                  = pix_fmt;
+
+   /* retro_unload_game() does not release the surface, so a previous load
+    * may have left one allocated. Free it before dropping the pointer,
+    * otherwise every load/unload cycle leaks a whole framebuffer. */
+#if defined(WANT_16BPP)
+   if(surf.pixels16)
+      free(surf.pixels16);
+#elif defined(WANT_32BPP)
+   if(surf.pixels)
+      free(surf.pixels);
+#endif
+
    surf.pixels16                = NULL;
    surf.pixels                  = NULL;
 

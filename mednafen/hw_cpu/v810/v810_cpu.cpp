@@ -74,6 +74,9 @@ V810::V810()
 
    memset(FastMap, 0, sizeof(FastMap));
 
+   FastMapAllocList  = NULL;
+   FastMapAllocCount = 0;
+
    memset(MemReadBus32, 0, sizeof(MemReadBus32));
    memset(MemWriteBus32, 0, sizeof(MemWriteBus32));
 
@@ -319,9 +322,16 @@ bool V810::Init(V810_Emu_Mode mode, bool vb_mode)
 
 void V810::Kill(void)
 {
-   if (FastMapAllocList)
+   unsigned int i;
+
+   for(i = 0; i < FastMapAllocCount; i++)
+      free(FastMapAllocList[i]);
+
+   if(FastMapAllocList)
       free(FastMapAllocList);
-   FastMapAllocList = NULL;
+
+   FastMapAllocList  = NULL;
+   FastMapAllocCount = 0;
 }
 
 void V810::SetInt(int level)
@@ -349,7 +359,19 @@ uint8 *V810::SetFastMap(uint32 addresses[], uint32 length, unsigned int num_addr
          FastMap[addr / V810_FAST_MAP_PSIZE] = ret - addresses[i];
    }
 
-   FastMapAllocList = ret;
+   {
+      uint8 **new_list = (uint8 **)realloc(FastMapAllocList,
+            sizeof(uint8 *) * (FastMapAllocCount + 1));
+
+      if(!new_list)
+      {
+         free(ret);
+         return(NULL);
+      }
+
+      FastMapAllocList                      = new_list;
+      FastMapAllocList[FastMapAllocCount++] = ret;
+   }
 
    return ret;
 }
