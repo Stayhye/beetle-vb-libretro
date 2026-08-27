@@ -2363,8 +2363,8 @@ bool retro_load_game(const struct retro_game_info *info)
    if(surf.pixels16)
       free(surf.pixels16);
 #elif defined(WANT_32BPP)
-   if(surf.pixels16)
-      free(surf.pixels16);
+   if(surf.pixels)
+      free(surf.pixels);
 #endif
 
    surf.pixels16                = NULL;
@@ -2376,7 +2376,7 @@ bool retro_load_game(const struct retro_game_info *info)
 #if defined(WANT_16BPP)
    surf.pixels16                = (uint16 *)rpix;
 #elif defined(WANT_32BPP)
-   surf.pixels16                = (uint16 *)rpix;
+   surf.pixels                  = (uint32 *)rpix;
 #endif
    surf.w                       = FB_WIDTH;
    surf.h                       = FB_HEIGHT;
@@ -2576,8 +2576,8 @@ void retro_run(void)
    if (!skip_this_frame)
    {
 #if defined(WANT_32BPP)
-      const uint16_t *pix = surf.pixels16;
-      video_cb(pix, width, height, FB_WIDTH << 1);
+      const uint32_t *pix = surf.pixels;
+      video_cb(pix, width, height, FB_WIDTH << 2);
 #elif defined(WANT_16BPP)
       const uint16_t *pix = surf.pixels16;
       video_cb(pix, width, height, FB_WIDTH << 1);
@@ -2622,8 +2622,8 @@ void retro_deinit(void)
    if(surf.pixels16)
       free(surf.pixels16);
 #elif defined(WANT_32BPP)
-   if(surf.pixels16)
-      free(surf.pixels16);
+   if(surf.pixels)
+      free(surf.pixels);
 #endif
    surf.pixels8           = NULL;
    surf.pixels16          = NULL;
