@@ -2036,12 +2036,11 @@ extern "C" int StateAction(StateMem *sm, int load, int data_only)
 #define MEDNAFEN_CORE_TIMING_FPS 50.27
 #define MEDNAFEN_CORE_GEOMETRY_BASE_W 384
 #define MEDNAFEN_CORE_GEOMETRY_BASE_H 224
-#define MEDNAFEN_CORE_GEOMETRY_MAX_W (384 * 2 + 256)
-#define MEDNAFEN_CORE_GEOMETRY_MAX_H (224 * 2)
-#define MEDNAFEN_CORE_GEOMETRY_ASPECT_RATIO (12.0 / 7.0)
-#define FB_WIDTH (384 * ((setting_vb_3dmode == VB3DMODE_ANAGLYPH) ? 1 : 2) + ((setting_vb_3dmode == VB3DMODE_SIDEBYSIDE) ? 256 : 0))
-#define FB_HEIGHT 224 * 2
-
+#define MEDNAFEN_CORE_GEOMETRY_MAX_W 384
+#define MEDNAFEN_CORE_GEOMETRY_MAX_H 224
+#define MEDNAFEN_CORE_GEOMETRY_ASPECT_RATIO (4.0 / 3.0)
+#define FB_WIDTH 384
+#define FB_HEIGHT 224
 
 #define FB_MAX_HEIGHT FB_HEIGHT
 
@@ -2166,7 +2165,7 @@ static void check_variables(void)
 
       if (strcmp(var.value, "black & red") == 0)
       {
-         setting_vb_lcolor = 0xFF0000;
+         setting_vb_lcolor = 0x0000FF;
          setting_vb_rcolor = 0x000000;
       }
       else if (strcmp(var.value, "black & white") == 0)
@@ -2176,17 +2175,17 @@ static void check_variables(void)
       }
       else if (strcmp(var.value, "black & blue") == 0)
       {
-         setting_vb_lcolor = 0x0000FF;      
+         setting_vb_lcolor = 0xFF0000;      
          setting_vb_rcolor = 0x000000;
       }
       else if (strcmp(var.value, "black & cyan") == 0)
       {
-         setting_vb_lcolor = 0x00B7EB;      
+         setting_vb_lcolor = 0xEBB700;      
          setting_vb_rcolor = 0x000000;
       }
       else if (strcmp(var.value, "black & electric cyan") == 0)
       {
-         setting_vb_lcolor = 0x00FFFF;      
+         setting_vb_lcolor = 0xFFFF00;      
          setting_vb_rcolor = 0x000000;
       }
       else if (strcmp(var.value, "black & green") == 0)
@@ -2201,7 +2200,7 @@ static void check_variables(void)
       }
       else if (strcmp(var.value, "black & yellow") == 0)
       {
-         setting_vb_lcolor = 0xFFFF00;      
+         setting_vb_lcolor = 0x00FFFF;      
          setting_vb_rcolor = 0x000000;
       }
       setting_vb_default_color = setting_vb_lcolor;
