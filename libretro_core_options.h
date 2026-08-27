@@ -167,7 +167,7 @@ struct retro_core_option_definition option_defs_us[] = {
          { "black & yellow",  NULL },
          { NULL, NULL},
       },
-      "black & red",
+      "black & white",
    },
    {
       "vb_right_analog_to_digital",
