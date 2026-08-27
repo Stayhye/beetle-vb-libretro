@@ -2529,6 +2529,18 @@ void retro_run(void)
    static unsigned width   = 0, height = 0;
    bool resolution_changed = false;
 
+   // Frame skipping toggle (drops every alternate frame to ease GPU/blit load)
+   static int frame_skip_counter = 0;
+   int skip_this_frame = 0;
+
+   if (frame_skip_counter == 0) {
+       frame_skip_counter = 1;
+       skip_this_frame = 0;
+   } else {
+       frame_skip_counter = 0;
+       skip_this_frame = 1;
+   }
+
    input_poll_cb();
 
    update_input();
@@ -2561,13 +2573,17 @@ void retro_run(void)
    if (resolution_changed)
       update_geometry(width, height);
 
+   /* Bypass the video draw call on alternate frames to save performance */
+   if (!skip_this_frame)
+   {
 #if defined(WANT_32BPP)
-   const uint32_t *pix = surf.pixels;
-   video_cb(pix, width, height, FB_WIDTH << 2);
+      const uint32_t *pix = surf.pixels;
+      video_cb(pix, width, height, FB_WIDTH << 2);
 #elif defined(WANT_16BPP)
-   const uint16_t *pix = surf.pixels16;
-   video_cb(pix, width, height, FB_WIDTH << 1);
+      const uint16_t *pix = surf.pixels16;
+      video_cb(pix, width, height, FB_WIDTH << 1);
 #endif
+   }
 
    audio_batch_cb(sound_buf, spec.SoundBufSize);
 
