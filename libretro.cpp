@@ -1875,12 +1875,6 @@ static int Load(const uint8_t *data, size_t size)
    }
    GPRAM = VB_V810->SetFastMap(Map_Addresses, GPRAM_Mask + 1, map_size, "Cart RAM");
 
-   if (Map_Addresses)
-   {
-      free(Map_Addresses);
-      Map_Addresses = NULL;
-   }
-
    memset(GPRAM, 0, GPRAM_Mask + 1);
 
    VIP_Init();
