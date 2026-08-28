@@ -2526,7 +2526,7 @@ void retro_run(void)
    skip_frame = !skip_frame;
 
    // Run CPU emulation steps
-   V810_V810->Run(VB_MASTER_CLOCK / 60);
+   VB_V810->Run(VB_MASTER_CLOCK / 60);
 
    // Only render video if not skipping
    if (!skip_frame)
