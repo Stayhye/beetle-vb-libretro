@@ -1809,13 +1809,10 @@ static INLINE uint32 round_up_pow2(uint32 v)
 
 static int Load(const uint8_t *data, size_t size)
 {
-   // Use stack memory instead of dynamic malloc overhead
    uint32_t Map_Addresses[8192];
    uint32_t map_size = 0;
    int i;
    uint64 A, sub_A;
-   
-   // Hardcode V810_EMU_MODE_FAST directly instead of querying setting strings
    V810_Emu_Mode cpu_mode = V810_EMU_MODE_FAST;
 
    /* VB ROM image size is not a power of 2??? */
