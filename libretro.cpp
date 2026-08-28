@@ -2525,7 +2525,7 @@ void retro_run(void)
    skip_frame = !skip_frame;
 
    // Run CPU emulation using the correct event handler function pointer
-   VB_V810->Run(VB_Emulate);
+   VB_V810->Run(Emulate);
 
    // Only render video if not skipping
    if (!skip_frame)
