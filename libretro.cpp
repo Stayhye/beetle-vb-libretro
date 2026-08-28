@@ -2513,12 +2513,26 @@ static void update_geometry(unsigned width, unsigned height)
  * roughly 3.6x headroom and still covers a widened rate or window. */
 #define SOUND_BUF_FRAMES 4096
 
+static bool skip_frame = false;
+
 void retro_run(void)
 {
    static int16_t sound_buf[SOUND_BUF_FRAMES * 2];
    EmulateSpecStruct spec;
    static unsigned width   = 0, height = 0;
    bool resolution_changed = false;
+
+   // Toggle skip flag per frame
+   skip_frame = !skip_frame;
+
+   // Run CPU emulation steps
+   V810_V810->Run(VB_MASTER_CLOCK / 60);
+
+   // Only render video if not skipping
+   if (!skip_frame)
+   {
+      video_cb(surf.pixels, width, height, FB_WIDTH << 2);
+   }
 
    // Frame skipping toggle (drops every alternate frame to ease GPU/blit load)
    static int frame_skip_counter = 0;
