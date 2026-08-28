@@ -2521,22 +2521,20 @@ void retro_run(void)
    bool resolution_changed = false;
 
    // Frame skipping toggle (drops every alternate frame to ease GPU/blit load)
-   static bool skip_frame = false;
-   skip_frame = !skip_frame;
+   static int frame_skip_counter = 0;
+   int skip_this_frame = 0;
 
-   // Run CPU emulation using the correct event handler function pointer
-   VB_V810->Run(Emulate);
-
-   // Only render video if not skipping
-   if (!skip_frame)
-   {
-      video_cb(surf.pixels, width, height, FB_WIDTH << 2);
+   if (frame_skip_counter == 0) {
+       frame_skip_counter = 1;
+       skip_this_frame = 0;
+   } else {
+       frame_skip_counter = 0;
+       skip_this_frame = 1;
    }
 
    input_poll_cb();
 
    update_input();
-}
 
    spec.surface            = &surf;
    spec.VideoFormatChanged = false;
