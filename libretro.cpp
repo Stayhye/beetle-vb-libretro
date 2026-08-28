@@ -2536,6 +2536,7 @@ void retro_run(void)
    input_poll_cb();
 
    update_input();
+}
 
    spec.surface            = &surf;
    spec.VideoFormatChanged = false;
