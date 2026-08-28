@@ -2511,7 +2511,7 @@ static void update_geometry(unsigned width, unsigned height)
  * frame count, not an element count. The buffers are configured for 44.1kHz over
  * a 50ms window, which caps samples_avail() at 2250 per call, so this leaves
  * roughly 3.6x headroom and still covers a widened rate or window. */
-#define SOUND_BUF_FRAMES 1024
+#define SOUND_BUF_FRAMES 4096
 
 void retro_run(void)
 {
