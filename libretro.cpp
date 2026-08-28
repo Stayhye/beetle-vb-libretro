@@ -1809,11 +1809,14 @@ static INLINE uint32 round_up_pow2(uint32 v)
 
 static int Load(const uint8_t *data, size_t size)
 {
-   uint32_t* Map_Addresses;
+   // Use stack memory instead of dynamic malloc overhead
+   uint32_t Map_Addresses[8192];
    uint32_t map_size = 0;
    int i;
    uint64 A, sub_A;
-   V810_Emu_Mode cpu_mode = (V810_Emu_Mode)MDFN_GetSettingI("vb.cpu_emulation");
+   
+   // Hardcode V810_EMU_MODE_FAST directly instead of querying setting strings
+   V810_Emu_Mode cpu_mode = V810_EMU_MODE_FAST;
 
    /* VB ROM image size is not a power of 2??? */
    if(size != round_up_pow2(size))
@@ -1841,8 +1844,6 @@ static int Load(const uint8_t *data, size_t size)
       VB_V810->SetMemReadBus32(i, false);
       VB_V810->SetMemWriteBus32(i, false);
    }
-
-   Map_Addresses = (uint32_t*)malloc(8192 * 4);
 
    for(uint64 A = 0; A < 1ULL << 32; A += (1 << 27))
    {
